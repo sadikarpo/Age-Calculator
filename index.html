@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Calculate your age accurately with this advanced Age Calculator. Enter your birthdate and an optional end date to find your age in years, months, and days.">
+  <meta name="keywords" content="age calculator, calculate age, age in years, age in months, age in days, from date to date">
+  <meta name="author" content="Your Name">
+  <title>Advanced Age Calculator</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      color: #e0e0e0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    input[type="date"] {
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      outline: none;
+    }
+
+    input[type="date"]::placeholder {
+      color: #ccc;
+    }
+
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      background: #2575fc;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #1b5fd9;
+    }
+
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    #ageOutput {
+      font-weight: bold;
+      color: #ffdd57;
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+
+    .reset-button {
+      background: #ff6b6b;
+      margin-top: 1rem;
+    }
+
+    .reset-button:hover {
+      background: #ff4757;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Advanced Age Calculator</h1>
+    <p>Enter your birthdate and an optional end date to calculate your age:</p>
+    <form id="ageForm">
+      <label for="fromDate">From Date (Birthdate):</label>
+      <input type="date" id="fromDate" name="fromDate" required>
+      <label for="toDate">To Date (Optional):</label>
+      <input type="date" id="toDate" name="toDate">
+      <button type="submit">Calculate Age</button>
+      <button type="button" id="resetButton" class="reset-button">Reset</button>
+    </form>
+    <div id="result" class="result">
+      <p>Your age is: <span id="ageOutput"></span></p>
+      <p>Total Years: <span id="totalYears"></span></p>
+      <p>Total Months: <span id="totalMonths"></span></p>
+      <p>Total Days: <span id="totalDays"></span></p>
+    </div>
+    <div id="error" class="error"></div>
+  </div>
+
+  <script>
+    document.getElementById('ageForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // Prevent form submission
+
+      // Get input values
+      const fromDate = new Date(document.getElementById('fromDate').value);
+      const toDateInput = document.getElementById('toDate').value;
+      const toDate = toDateInput ? new Date(toDateInput) : new Date(); // Default to today if no toDate
+
+      // Validate dates
+      if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+        document.getElementById('error').textContent = "Please enter valid dates.";
+        return;
+      }
+
+      if (fromDate > toDate) {
+        document.getElementById('error').textContent = "From Date cannot be after To Date.";
+        return;
+      }
+
+      // Clear previous errors
+      document.getElementById('error').textContent = "";
+
+      // Calculate age
+      let years = toDate.getFullYear() - fromDate.getFullYear();
+      let months = toDate.getMonth() - fromDate.getMonth();
+      let days = toDate.getDate() - fromDate.getDate();
+
+      if (days < 0) {
+        months--;
+        const lastMonth = new Date(toDate.getFullYear(), toDate.getMonth(), 0);
+        days += lastMonth.getDate();
+      }
+
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      // Calculate total days and months
+      const timeDiff = toDate - fromDate;
+      const totalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const totalMonths = years * 12 + months;
+
+      // Display the result
+      document.getElementById('ageOutput').textContent = `${years} years, ${months} months, and ${days} days`;
+      document.getElementById('totalYears').textContent = years;
+      document.getElementById('totalMonths').textContent = totalMonths;
+      document.getElementById('totalDays').textContent = totalDays;
+    });
+
+    // Reset functionality
+    document.getElementById('resetButton').addEventListener('click', function () {
+      document.getElementById('ageForm').reset();
+      document.getElementById('ageOutput').textContent = "";
+      document.getElementById('totalYears').textContent = "";
+      document.getElementById('totalMonths').textContent = "";
+      document.getElementById('totalDays').textContent = "";
+      document.getElementById('error').textContent = "";
+    });
+  </script>
+</body>
+</html>
